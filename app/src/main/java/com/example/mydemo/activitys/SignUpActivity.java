@@ -90,42 +90,47 @@ public class SignUpActivity extends AppCompatActivity {
         String password = binding.edtPassword.getText().toString().trim();
         String pre_pass = binding.edtPrePassword.getText().toString().trim();
 
-        String imageName = System.currentTimeMillis() + ".jpg";
+        auth.createUserWithEmailAndPassword(email,password).addOnSuccessListener(it->{
+            String imageName = System.currentTimeMillis() + ".jpg";
 
-        StorageReference imageRef = storageLogo.child(imageName);
-        UploadTask uploadTask = imageRef.putFile(imgUri);
+            StorageReference imageRef = storageLogo.child(imageName);
+            UploadTask uploadTask = imageRef.putFile(imgUri);
 
-        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
 
-            //Lay url tu firestorage
-            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                //Lay url tu firestorage
+                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
 
-                Map<String, Object> gymMap = new HashMap<>();
-                gymMap.put("name", nameGym);
-                gymMap.put("email", email);
-                gymMap.put("phone", phone);
-                gymMap.put("address", address);
-                gymMap.put("city", city);
-                gymMap.put("password", password);
-                gymMap.put("pre_pass", pre_pass);
-                gymMap.put("logoUrl", uri.toString());
+                    Map<String, Object> gymMap = new HashMap<>();
+                    gymMap.put("name", nameGym);
+                    gymMap.put("email", email);
+                    gymMap.put("phone", phone);
+                    gymMap.put("address", address);
+                    gymMap.put("city", city);
+                    gymMap.put("password", password);
+                    gymMap.put("pre_pass", pre_pass);
+                    gymMap.put("logoUrl", uri.toString());
 
-                //Push du lieu len realtime
-                String gymId = infoRef.push().getKey();
-                infoRef.child(gymId).setValue(gymMap)
-                        .addOnSuccessListener(aVoid ->{
-                            Toast.makeText(this,"Upload infor success",Toast.LENGTH_SHORT).show();
+                    //Push du lieu len realtime
+                    String gymId = infoRef.push().getKey();
+                    infoRef.child(gymId).setValue(gymMap)
+                            .addOnSuccessListener(aVoid ->{
+                                Toast.makeText(this,"Upload infor success",Toast.LENGTH_SHORT).show();
 
-                        })
-                        .addOnFailureListener(e->{
-                            Toast.makeText(this, "Upload failed!", Toast.LENGTH_SHORT).show();
-                            Log.e("Logg",e.getMessage());
+                            })
+                            .addOnFailureListener(e->{
+                                Toast.makeText(this, "Upload failed!", Toast.LENGTH_SHORT).show();
+                                Log.e("Logg",e.getMessage());
 
-                        });
+                            });
+
+                });
 
             });
 
         });
+
+
     }
 
 
